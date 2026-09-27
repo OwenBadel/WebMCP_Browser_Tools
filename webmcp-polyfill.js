@@ -1,8 +1,7 @@
 /**
  * WebMCP Polyfill - Web Machine Control Protocol
  * Implementación de referencia y polyfill para document.modelContext
- * Basado en la propuesta W3C Web Machine Learning y Chrome WebMCP Origin Trial.
- * Compatible con la especificación estudiada en Lemon Fábrica de Software.
+ * Compatible con la especificación técnica de agentes e interoperabilidad del navegador.
  */
 
 (function () {

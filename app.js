@@ -1,6 +1,6 @@
 /**
  * WebMCP Interactive Showcase Application
- * Lemon Fábrica de Software - PROJ-007
+ * Ing. Owen Badel Hooker - PROJ-007
  */
 
 (function () {
