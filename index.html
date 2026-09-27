@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebMCP Suite — Control de Navegador para Agentes de IA | Ing. Owen Badel Hooker</title>
+  <meta name="description" content="Implementación y banco de pruebas del estándar WebMCP (Web Machine Control Protocol) con APIs imperativas y declarativas, polyfill universal y consola en vivo de agentes de IA.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://cdn.jsdelivr.net/npm/@tabler/icons@3.2.0/icons/outline/cpu.svg" type="image/svg+xml">
+  <!-- WebMCP Polyfill Universal (Carga temprana) -->
+  <script src="webmcp-polyfill.js"></script>
+</head>
+<body>
+
+  <!-- Barra de Navegación Superior -->
+  <header class="top-navbar">
+    <div class="brand-section">
+      <div class="brand-logo">⚡</div>
+      <div class="brand-meta">
+        <h1>WebMCP Studio</h1>
+        <span>Ing. Owen Badel Hooker • Protocolo W3C / Chrome WebML</span>
+      </div>
+    </div>
+
+    <div class="nav-status">
+      <div class="status-chip">
+        <div class="status-dot"></div>
+        <span id="engineStatusText">Detectando WebMCP...</span>
+      </div>
+      <div class="status-chip" id="systemModeBadge" style="color: var(--accent);">
+        Modo: Normal
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="main-wrapper">
+
+    <!-- Banner Hero -->
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h2>🌐 Servidor MCP Dentro de la Página Web</h2>
+        <p>
+          Las herramientas (tools) son declaradas por la propia página y consumidas por agentes de IA.
+          Cualquier acción se ejecuta <b>en el DOM a la vista del usuario</b> sin recurrir a scraping frágil ni credenciales duplicadas.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="window.simularSecuenciaAgente()">
+          🤖 Simular Agente Autónomo
+        </button>
+        <button id="btnTogglePanic" class="btn-secondary" onclick="window.toggleTemporaryPanicTool()">
+          ➕ Activar Tool Temporal (AbortSignal)
+        </button>
+      </div>
+    </section>
+
+    <!-- Grid de Dos Columnas -->
+    <div class="dashboard-grid">
+
+      <!-- ================= COLUMNA IZQUIERDA: APLICACIÓN Y FORMS ================= -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Panel 1: API Imperativa -->
+        <section class="glass-panel" id="panelOperaciones">
+          <div class="panel-header">
+            <h3 class="panel-title">
+              <span>📋 Operaciones de la Fábrica</span>
+              <span class="badge-counter" id="taskCountBadge">0</span>
+            </h3>
+            <span style="font-size: 0.75rem; color: var(--accent);">API Imperativa (`registerTool`)</span>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Esta lista es modificada en vivo tanto por humanos como por agentes de IA invocando la tool <code>agregar_tarea_urgente</code>.
+          </p>
+
+          <div class="item-list" id="tasksList">
+            <!-- Tareas renderizadas dinámicamente -->
+          </div>
+        </section>
+
+        <!-- Panel 2: API Declarativa -->
+        <section class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">
+              <span>📝 Registro de Incidencias</span>
+            </h3>
+            <span style="font-size: 0.75rem; color: var(--accent-warm);">API Declarativa (`&lt;form toolname&gt;`)</span>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Este formulario HTML no requiere JavaScript para ser descubierto: los atributos <code>toolname</code> y <code>toolparamdescription</code> generan su JSON Schema automáticamente.
+          </p>
+
+          <!-- Formulario Declarativo WebMCP -->
+          <form id="supportForm"
+                toolautosubmit
+                toolname="crear_solicitud_soporte"
+                tooldescription="Registra un ticket de soporte técnico en el sistema de la fábrica con módulo y urgencia.">
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="modulo">Módulo Afectado</label>
+                <select id="modulo" name="modulo" class="select-control" required
+                        toolparamdescription="Nombre del componente o módulo de software con la anomalía">
+                  <option value="IndexedDB / Offline Queue">IndexedDB / Offline Queue</option>
+                  <option value="Servidor MCP Python">Servidor MCP Python</option>
+                  <option value="Motor de Visión Gemini">Motor de Visión Gemini</option>
+                  <option value="Pipeline Obsidian OKF">Pipeline Obsidian OKF</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="urgencia">Nivel de Urgencia</label>
+                <select id="urgencia" name="urgencia" class="select-control" required
+                        toolparamdescription="Nivel de prioridad del incidente: Baja, Media, Alta, Inmediata">
+                  <option value="Media">Media</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Inmediata">Inmediata</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="descripcion">Detalle de la Incidencia</label>
+              <input type="text" id="descripcion" name="descripcion" class="input-control" required
+                     placeholder="Ej: Latencia elevada en la sincronización de fichas"
+                     toolparamdescription="Descripción concisa y técnica del fallo reportado">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+              <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-warm), #ed8936); color: #2d1400;">
+                ✉️ Enviar Solicitud Manual
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </div>
+
+      <!-- ================= COLUMNA DERECHA: INSPECTOR Y CONSOLA ================= -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- Panel 3: Catálogo Descubierto (Inspector) -->
+        <section class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">
+              <span>🔍 Model Context Inspector</span>
+              <span class="badge-counter" id="toolCountBadge">0</span>
+            </h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">`getTools()` en vivo</span>
+          </div>
+
+          <div class="tool-catalog" id="toolCatalog">
+            <!-- Herramientas descubiertas renderizadas por JS -->
+          </div>
+        </section>
+
+        <!-- Panel 4: Consola de Ejecución del Agente -->
+        <section class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">
+              <span>⚡ Consola del Agente (`executeTool`)</span>
+            </h3>
+          </div>
+
+          <div class="form-group">
+            <label for="toolSelector">Herramienta a Invocar:</label>
+            <select id="toolSelector" class="select-control" onchange="window.cargarToolEnConsola(this.value)">
+              <!-- Opciones pobladas dinámicamente -->
+            </select>
+          </div>
+
+          <div class="console-box">
+            <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Parámetros de Entrada (JSON Schema):</label>
+            <textarea id="consoleEditor" class="console-editor" spellcheck="false"></textarea>
+            <div id="consoleOutput" class="console-output">Esperando ejecución...</div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 6px;">
+            <button class="btn-primary" onclick="window.ejecutarToolSeleccionada()">
+              ▶ Invocación Agéntica WebMCP
+            </button>
+          </div>
+        </section>
+
+        <!-- Panel 5: Telemetría de Eventos WebMCP -->
+        <section class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">
+              <span>📡 Telemetría y Eventos DOM</span>
+            </h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">toolchange • toolactivated</span>
+          </div>
+
+          <div class="telemetry-stream" id="telemetryLog">
+            <div class="log-entry">
+              <span class="time">[Inicio]</span> Sistema de telemetría WebMCP escuchando en tiempo real.
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Contenedor flotante para Toast Notifications -->
+  <div id="toastContainer"></div>
+
+  <!-- Script de la Aplicación -->
+  <script src="app.js"></script>
+</body>
+</html>
